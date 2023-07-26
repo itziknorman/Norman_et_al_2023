@@ -1,4 +1,4 @@
-# Data accompanying Norman_et_al_2023
+# Data and code accompanying Norman_et_al_2023
 
 ﻿This repository contains intra-cranial EEG recordings and analysis code related to the paper:
 Norman et al., "Hippocampal ripples support recognition memory in children".
