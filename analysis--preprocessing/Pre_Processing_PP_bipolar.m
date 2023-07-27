@@ -1,3 +1,16 @@
+%% This the bipolar montage preprocessing script. 
+% It loads the data, pairs the electrodes and subtract one from the other (bipolar montage). 
+% Then it applies notch filters to remove line noise, 
+% performs resampling if needed, renames the auxiliary channels, 
+% and identifies disconnected/noisy electrodes. Additionally, 
+% it computes the common average reference after excluding noisy 
+% channels and stores it for later use during ripple detection. 
+% The scripts requires the *.set files containing the entire experiment, which are not included in this
+% repository. Contact Yitzhak Norman (itzik.norman@gmail.com) for the original files
+%
+% Author: Itzik Norman
+
+
 close all;
 clear all;
 clc; warning('off');
@@ -83,12 +96,8 @@ for subjid = {'SUB01ASSUTA'} %subjects(7:end-3)
               
 
     %% Remove non-channels:
-    if contains(subjid,'ASSUTA')
-        load(fullfile(maindir,'BioImage','SUB01ASSUTA_matlab.mat'),'bio_order');
-        ch_to_remove=setdiff(find(~contains({EEG.chanlocs.labels},bio_order)),aux_channels);
-    else
-        ch_to_remove=setdiff(find(~multiStrFind({EEG.chanlocs.labels},'EEG')),aux_channels);
-    end
+  
+    ch_to_remove=setdiff(find(~multiStrFind({EEG.chanlocs.labels},'EEG')),aux_channels);   
     
     for ch={EEG.chanlocs(ch_to_remove).labels}
         fprintf('--- Removing Channel: %s --- \n',cell2mat(ch));
@@ -166,7 +175,7 @@ for subjid = {'SUB01ASSUTA'} %subjects(7:end-3)
       
     %==================================================================
     
-    % keep only channels that are connected and are in the brain (verified visually):
+    % keep only channels that are connected and are in the brain (verified visually using freesurfer):
     if FSflag
         load(fullfile(elocDir,'electrodes.mat'))
         inBrain_channels = find(ismember({EEG.chanlocs.labels},electrodes.elecNames));
@@ -188,8 +197,7 @@ for subjid = {'SUB01ASSUTA'} %subjects(7:end-3)
     end
     
     % Compute common cortical average after 50Hz removal:
-    if contains(subjid,'ASSUTA'), notchFreqs=[50:50:450];
-    else,  notchFreqs=[50]; end
+    notchFreqs = [50];  % add additional frequencies if needed to remove the 50Hz harmonics
     filterWidth=1.5; % Hz
     EEG_clean=EEG;
     for f=notchFreqs
@@ -204,6 +212,7 @@ for subjid = {'SUB01ASSUTA'} %subjects(7:end-3)
     % Compute cortical contacts average for control ripple detection (optional):
     %   cortical_channels = find(multiStrFind(channelFSlabel,'ctx')&~multiStrFind(channelFSlabel,'unknown'));
     %   mean_good_signal=robustMean(EEG.data(cortical_channels,:),1,5);
+
     % alternative:
     mean_good_signal = CREF;
     

@@ -1,4 +1,7 @@
-%% Build whole run EEGLAB dataset:
+%% This script converts EDFs into EEGLAB dataset consisting of the entire experiment:
+% it requires the original edf files, which are not included in this
+% repository. 
+% Contact Yitzhak Norman (itzik.norman@gmail.com) for the original files
 
 clear all
 close all
@@ -7,7 +10,6 @@ clc;
 [filepath,~] = fileparts(matlab.desktop.editor.getActiveFilename); addpath(fullfile(filepath,'..'));
 [parentfolder,path_to_toolboxes] = defineParentFolderAndPath;
 
-
 % add/remove paths:
 addpath(fullfile(path_to_toolboxes,'eeglab2021.1'));
 rmpath(genpath(fullfile(path_to_toolboxes,'chronux_2_12')));
@@ -15,12 +17,12 @@ addpath(genpath(fullfile(parentfolder,'matlab_scripts')));
 
 [ALLEEG, EEG, CURRENTSET] = eeglab;
 warning('off')
-subjects={'PP01','PP02','PP03','PP04','PP05','PP06','PP07','PP08','PP09','PP10','PP11','PP14','PP15','PP16','PP17','PP18'};
+subjects={'PP02','PP03','PP04','PP05','PP06','PP07','PP08','PP09','PP10','PP11','PP15','PP16','PP17','PP18'};
 
-for subjid = subjects(end)
+for subjid = subjects(1)
     subjid = cell2mat(subjid);
     close all;
-    clearex('subjects', 'subjid', 'ALLEEG', 'EEG');
+    clearex('subjects', 'subjid', 'ALLEEG', 'EEG','parentfolder');
     ALLEEG=[]; EEG=[]; CURRENTSET=1;
     maindir=fullfile(parentfolder,subjid);
     cd(maindir)

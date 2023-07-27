@@ -1,4 +1,8 @@
 %% Find triggers:
+
+% This script find the onsets of the clips mannualy, for patients in which the trigger channle is not
+% available:
+
 triggers = [EEG.event.latency];
 y = zeros(size(EEG.times));
 y(triggers) = 1;

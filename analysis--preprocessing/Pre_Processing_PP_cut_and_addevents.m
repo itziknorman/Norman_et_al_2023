@@ -1,6 +1,10 @@
+%% This script cut the experiment into the various conditions: REST x2, MOVIE x2, and MEMORY TEST 
+
+
 clear all
 close all
 clc;
+
 % set the relevant path:
 [filepath,~] = fileparts(matlab.desktop.editor.getActiveFilename); addpath(fullfile(filepath,'..'));
 [parentfolder,path_to_toolboxes] = defineParentFolderAndPath;
@@ -138,7 +142,7 @@ for subjid = subjects(1:end)
                
             
         end
-   %%         
+            
         strind = triggers(ind1);
         finind = triggers(ind2);
 
