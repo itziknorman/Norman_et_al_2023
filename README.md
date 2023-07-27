@@ -10,6 +10,7 @@ The analysis was conducted on a desktop computer equipped with a Intel® Xeon(R)
 Most of the analyses are organized as lengthy scripts divided into distinct sections. The recommended approach for executing the code is to progress through each section one at a time, in sequential order.
 
 **External open-source toolboxes used in the analysis:**
+
 •	EEGLAB, version: v2021.1
 •	Superbar / Scott Lowe (https://github.com/scottclowe/superbar), version: 1.5.0
 •	Export_fig / Oliver J. Woodford & Yair M. Altman (https://github.com/altmany/export_fig)
