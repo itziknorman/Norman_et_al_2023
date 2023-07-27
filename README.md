@@ -1,4 +1,4 @@
-# code accompanying Norman_et_al_2023
+# Code accompanying Norman_et_al_2023
 
 ﻿This repository contains code for the main analyses described in Norman et al. (2023), "Hippocampal ripples support recognition memory in children".
 
