@@ -2,7 +2,7 @@
 
 ﻿This repository contains code for the main analyses described in Norman et al. (2023), "Hippocampal ripples support recognition memory in children".
 
-For the intracranial data and the complete code, please refer to Zenodo DOI: 10.5281/zenodo.8187953.
+For the intracranial data and the complete code, please refer to Zenodo DOI (will be made available after publication): 10.5281/zenodo.8187953.
 
 **General remarks:**
 The analysis code was written in MATLAB (R2021a). All functions and scripts are organized in subdirectories within the "matlab_scripts" folder, based on their respective subjects of analysis, such as ripple detection, ripple rate and PETH, deconvolution of peri-ripple responses, and more.
