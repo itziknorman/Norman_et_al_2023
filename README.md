@@ -19,6 +19,7 @@ External open-source toolboxes used in the analysis:
 •	Mass Univariate ERP Toolbox (https://openwetware.org/wiki/Mass_Univariate_ERP_Toolbox)
 
 **The following table links the code to the main figures in the paper:**
-![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/31306b9c-9b87-41a1-a72a-bbecaaa90030)
+![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/66e4067d-4c19-4feb-8029-608be5a9b1db)
+
 
 
