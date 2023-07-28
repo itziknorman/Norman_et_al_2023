@@ -1,7 +1,7 @@
 function  [H,h,hcb] = plot_spectrogram(S,params_plot)
 % plotting spectrogram based on eeglab
-% CC = spectrogram matrix (freq X time X trials)
-% params_plot = structure iwth various parameters;
+% S = spectrogram matrix (freq X time X trials)
+% params_plot = structure with various plotting parameters;
 %
 % Author: Itzik Norman (2022)
 
