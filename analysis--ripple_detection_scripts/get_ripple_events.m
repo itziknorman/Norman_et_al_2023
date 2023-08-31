@@ -166,7 +166,7 @@ for iSub=1 %:numel(subjects)
             absSignalB(absSignalB>topLimB) = topLimB; % clipping the signal
             squaredSignalB = absSignalB.^2;           % squared amplitude
             
-             % Defining thr for clipping (IEDs):
+             % Defining thr for clipping (hippocampal IED band):
             [robustAvgC,robustStdevC] = robustMean(absSignalC,2,IEDthr);     % robust mean and std used for clipping
             topLimC = robustAvgC + IEDthr*robustStdevC;           
             absSignalC(absSignalC>topLimC) = topLimC; % clipping the signal
