@@ -20,8 +20,7 @@ subjects={'PP02','PP03','PP04','PP05','PP06','PP07','PP08','PP09','PP10','PP11',
 blocks = {'R1','M1','R2','M2','MT'};
 
 for iSub=1 %:numel(subjects)
-    
-    
+       
     clearvars -except subjects blocks iSub ALLEEG EEG parentfolder path_to_toolboxes outdir
     subjid = subjects{iSub};
     ALLEEG=[]; EEG=[]; CURRENTSET=1;
@@ -29,8 +28,7 @@ for iSub=1 %:numel(subjects)
     RIPPLES = [];
         
     warning('off','all')    
-    
-   
+       
     % load datasets:
    
     maindir=fullfile(parentfolder,subjid);
@@ -54,8 +52,6 @@ for iSub=1 %:numel(subjects)
         [EEG] = pop_loadset('filename',filename);
         [ALLEEG EEG ~] = eeg_store(ALLEEG, EEG, iBlock);
     end
-          
-    
     
     %% Defining Hippocampus:
     set_figure_colors;
@@ -114,8 +110,7 @@ for iSub=1 %:numel(subjects)
             params.units='abs';
             params.freqscale='linear';
             params.normflag = 0;
-            
-            
+                        
             epochlim = [T(1) T(end)];
             
             params.timesout=150;
@@ -156,7 +151,6 @@ for iSub=1 %:numel(subjects)
             cb.Label.String = 'Voltage';
             freezeColors;
             
-
             subplot(2,2,2); hold on;
             plot(EEGepoched.times,nanmean(EEGepoched.data(cnum1,:,:),3),'k','linesmoothing','on');            
              xlabel('Time (s)'); ylabel('Voltage \muV');
