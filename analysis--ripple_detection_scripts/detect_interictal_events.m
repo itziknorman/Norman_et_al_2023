@@ -66,10 +66,6 @@ for iSub=1 %:numel(subjects)
                 
         cnum1=find(strcmpi({EEG.chanlocs.labels},current_hippocampus)); % hippocampal channel, identified anatomically
         channel=EEG.chanlocs(cnum1).labels;
-               
-        % we use the averaged LFP across all good
-        % channels (common ref) to perform control detection of ripples,
-        % which allows to discard muscular/electrical artifacts.
         
         if isempty(current_hippocampus)
             error('Missing hippocampal channel!')
