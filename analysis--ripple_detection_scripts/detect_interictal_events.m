@@ -64,7 +64,7 @@ for iSub=1 %:numel(subjects)
     saveflag = 1;
     for current_hippocampus = hippocampus_all_channels
                 
-        cnum1=find(strcmpi({EEG.chanlocs.labels},current_hippocampus)); % CA1 channel, identified anatomically
+        cnum1=find(strcmpi({EEG.chanlocs.labels},current_hippocampus)); % hippocampal channel, identified anatomically
         channel=EEG.chanlocs(cnum1).labels;
                
         % we use the averaged LFP across all good
