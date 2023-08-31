@@ -1,4 +1,4 @@
-% The script run IED detection in hippocampal sites for later exclusion of candidate hippocampal ripple events. 
+% The script runs IED detection in hippocampal sites for later exclusion of candidate hippocampal ripple events. 
 % calling the function LLspikedetector.m (By Kleen-Lab)
 %
 % Author: Itzik Norman, Chang lab 2022
