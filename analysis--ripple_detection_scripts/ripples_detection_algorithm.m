@@ -4,7 +4,7 @@ function [ripples,ripples_stat,r]=ripples_detection_algorithm(signal,BP,t,Fs,th,
 % signal: normalized squared bandpassed LFP signal from the hippocampus         
 % BP: raw bandpass signal
 % t: corresponding time vector in sec
-% th: event expansion and detection thresholds in stdev [onset/offset peak]
+% th: thresholds for event expansion and detection in stdev [onset/offset peak]
 % minDistance: in sec
 % minRippleDuration; min ripple duration in Sec
 % maxRippleDuration: max ripple duration in Sec
