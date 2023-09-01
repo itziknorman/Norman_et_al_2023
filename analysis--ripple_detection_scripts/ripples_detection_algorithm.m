@@ -13,7 +13,7 @@ function [ripples,ripples_stat,r]=ripples_detection_algorithm(signal,BP,t,Fs,th,
 % IED_onsets: timestamps of IEDs, detected using the linelength algorithm & IED-band ampltiude transients detector
 % boundary_onsets: recording boundaries to avoid edge artifacts
 %
-% Author: Itzik Norman 10/03/20
+% Author: Yitzhak Norman 10/03/20
 
 if size(signal,2)<size(signal,1),signal=signal'; end
 if size(noise_ch,2)<size(noise_ch,1),noise_ch=noise_ch'; end
