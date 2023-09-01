@@ -1,6 +1,6 @@
 This folder contains the ripple detection algorithm
 
-Prior to the detection, hippocampal electrode were identified using the following procedure:
+Prior to the detection, hippocampal electrode are identified using the following procedure:
 
 *Electrode localizaion*
 
