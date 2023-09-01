@@ -1,6 +1,6 @@
 
 function [ripples,ripples_stat,r]=ripples_detection_algorithm(signal,BP,t,Fs,th,minDistance,minRippleDuration,maxRippleDuration,noise_ch,fastRippleSignal,IED_onsets,boundary_onsets)
-% detecting ripples based on Strack et al. 2014 (Neuron) method
+% detecting ripples based on Strack et al. 2014 method (doi: 10.1016/j.neuron.2014.06.023)  
 % signal: normalized squared bandpassed LFP signal from the hippocampus         
 % BP: raw bandpass signal
 % t: corresponding time vector in sec
