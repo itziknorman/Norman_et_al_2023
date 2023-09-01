@@ -1,5 +1,5 @@
 % Hippocampal ripple detection main script.
-% detects ripples after exclusion of electrical & muscular artifacts, IED and pathological HFOs (optional).
+% Load the relevant EEGLAB datasets and detects ripples after exclusion of electrical & muscular artifacts, IED and pathological HFOs (optional).
 %
 % Author: Yitzhak Norman, 2023
 
