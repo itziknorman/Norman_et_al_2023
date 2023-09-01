@@ -8,8 +8,8 @@ function [ripples,ripples_stat,r]=ripples_detection_algorithm(signal,BP,t,Fs,th,
 % minDistance: in sec
 % minRippleDuration; min ripple duration in Sec
 % maxRippleDuration: max ripple duration in Sec
-% noise_ch: channel to exclude muscular/electrical artefacts identifed as rippples
-% fastRippleSignal: bandpass signal to exclude fast-ripple-band transients that coincide with rippples
+% noise_ch: channel to exclude muscular/electrical artifacts identifed as ripples
+% fastRippleSignal: (optional) bandpass signal to exclude fast-ripple-band transients that coincide with rippples
 % IED_onsets: timestamps of IEDs, detected using the linelength algorithm & IED band ampltiude transients detector
 % boundary_onsets: recording boundaries to avoid edge artifacts
 %
