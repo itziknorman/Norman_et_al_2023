@@ -284,7 +284,8 @@ es=(m2-m1)./sqrt(sP);
 [str] = split(elecName1,'_'); str=str(:,2);
 [ES,esSubj] = grpstats(es,str,{'mean','gname'});
 
-fprintf('Overall accuracy in the task: %.2f (+/-%.2f)',mean(grpAcc),std(grpAcc)./sqrt(length(grpAcc)));
+fprintf('\nOverall accuracy in the task: %.3f (+/-%.3f)',mean(grpAcc),std(grpAcc)./sqrt(length(grpAcc)));
+fprintf('\nOverall accuracy in the task: %.3f (+/-%.3f)',mean(1-grpAcc),std(1-grpAcc)./sqrt(length(grpAcc)));
 
 % performance bar plot:
 meas = grpAcc*100;  % select dp (d-prime) or grpAcc*100 (% correct)
@@ -439,7 +440,7 @@ raster_type = 2;
 %CM =  [ones(5,3); cbrewer('seq','Reds',12); COLOR.bordo];
 CM =  [ones(5,3); cbrewer('seq','Greys',12); ];
 
-for analysis_flag = 2
+for analysis_flag = 4 %[1,2,3]
     % ---------------------------------------------------------------------
     % General notes:
     % doublet_flag: % -1 = all ripples; 0 = exclude doublets,triplets etc.; 1 = include only doublets
@@ -457,10 +458,10 @@ for analysis_flag = 2
             params.textlabel1 = '4s video clips';
             params.textlabel2 = 'rest';
             params.sem_flag = 'acrosssubjects';
-            params.binsize = 100;
+            %params.binsize = 100;
             params.statistical_test = 1;
             params.xtick = -10:1:10;
-            params.ylim = [-1 1];
+           
             params.ytick = [0:0.1:2];
             params.position = [0 200 200 200];
             params.drawshuffleddistribution = 0;
@@ -484,10 +485,10 @@ for analysis_flag = 2
             
             if single_elec_flag, params.sem_flag = 'acrosselectrodes'; raster_type = 1;
             else,  params.sem_flag = 'acrosssubjects'; end
-            params.binsize = 125;
+            %params.binsize = 125;
             params.statistical_test = 1;
             params.xtick = -10:1:10;
-            params.ylim = [-1 1];
+         
             params.ytick = [0:0.1:2];
             params.position = [0 200 200 200];
             params.drawshuffleddistribution = 0;
@@ -518,10 +519,10 @@ for analysis_flag = 2
             params.textlabel3 = '2nd presentation';
             if single_elec_flag, params.sem_flag = 'acrosselectrodes';
             else,  params.sem_flag = 'acrosssubjects'; end
-            params.binsize = 125;
+            %params.binsize = 125;
             params.statistical_test = 1;
             params.xtick = -10:1:10;
-            params.ylim = [-1 1];
+            
             params.ytick = [0:0.1:2];
             params.position = [0 200 200 200];
             params.drawshuffleddistribution = 0;
@@ -539,14 +540,55 @@ for analysis_flag = 2
                 params.title1 = sprintf('raster_OLD-vs-ORIG');
                 params.title2 = sprintf('psth_OLD-vs-ORIG');
             end
+            
+        case 4        
+            raster_type = 1;
+            % analysis parameteres:
+            params.figure_handel = {'H4g','H4h'};
+            params.doublet_flag = -1;            
+            params.color1 = COLOR.correct;
+            params.color2 = COLOR.error;            
+            params.textlabel1 = 'correct';
+            params.textlabel2 = 'error';            
+            if single_elec_flag, params.sem_flag = 'acrosselectrodes';
+            else,  params.sem_flag = 'acrosssubjects'; end
+            %params.sem_flag = 'acrosstrials';
+          
+            %params.binsize = 250;
+            params.statistical_test = 1;
+            params.xtick = -10:1:10;
+            params.ylim = [0 0.55];
+            params.ytick = [0:0.1:2];
+            params.position = [0 200 200 200];
+            params.drawshuffleddistribution = 0;
+            params.maskExtraTimePoints = 0;
+            % select trials: cond1 vs cond2
+            params.nconditions = 2;
+            params.conditionToCompare = [1,2];
+            
+            params.ind1 = CA1elecInd & DATA.Rall.correct==1;
+            params.ind2 = CA1elecInd & DATA.Rall.correct==0;
+            if single_elec_flag
+                params.title1 = sprintf('raster_Correct-vs-Error only CA1');
+                params.title2 = sprintf('psth_Correct-vs-Error only CA1');
+            else
+                params.title1 = sprintf('raster_Correct-vs-Error');
+                params.title2 = sprintf('psth_Correct-vs-Error');
+            end
     end
-    switch norm_flag
-        case 0, params.ylim = [0.2 0.65];
-        case 1, params.ylim = [-0.5 1.5];
-        case 2, params.ylim = [0.1 0.5];
+    
+    if ~isfield(params,'ylim')
+        switch norm_flag
+            case 0, params.ylim = [0.2 0.65];
+            case 1, params.ylim = [-0.5 1.5];
+            case 2, params.ylim = [0.1 0.5];
+        end
     end
     switch time_locking_event
-        case 'stimonset',  params.xlim = [-2 6];
+        case 'stimonset'
+            if analysis_flag==4, params.xlim = [-4 4.5];
+            else params.xlim = [-2 6];
+            end
         case 'rt', params.xlim = [-5 2];
     end
     sig = [];
@@ -556,6 +598,7 @@ for analysis_flag = 2
     RT = DATA.Rall.RT;
     RT(contains(DATA.Rall.response,'n/a')) = nan;
     data = logical(DATA.Rall.raster)'; % all trials
+    testCond = params.conditionToCompare;
     clear R1 R2 r1_sem r2_sem
     
     
@@ -641,7 +684,7 @@ for analysis_flag = 2
         bs = optimal_binsize_estimation(Nr,sd,trial_duration,Fs,binsize_method);
         smt = 4; % number of successive time bins to smooth (two runs of moving average: n*smt-n+1 = 6 points filter, where n=number of smooth iterations)
         fprintf('\n*** binsize needs to be approximately %d ms (before smoothing) ***\n',round(bs/smt)/Fs*1000)
-        binsize = params.binsize; %round(bs/smt); % samples
+        binsize = round(bs/smt); % samples
         
         %%% ploting raster using scatter:
         
@@ -669,6 +712,7 @@ for analysis_flag = 2
         
         axis tight
         hold on;
+        drawnow;
         
         % add markers at trial onset / resopnse:
         if strcmpi(time_locking_event, 'rt'), scatter(-condRT.(sprintf('cond%d',k)),N.(sprintf('cond%d',k)),1,'o','markerFaceColor',COLOR.black,'markerEdgeColor','none'); hold on;
@@ -696,11 +740,11 @@ for analysis_flag = 2
         text(1.1*tmpx(2),yText,params.(sprintf('textlabel%d',k)),...
             'fontsize',8,'Rotation',90,'horizontalalignment','center','color',params.(sprintf('color%d',k)),'fontweight','bold');
         pos = get(gca, 'Position');
-        
+                
     end
     
     if raster_type == 2
-        %clim = [floor(prctile(NN,2.5)/10)*10 ceil(prctile(NN,97.5)/10)*10];
+   
         clim = [floor(prctile(NN,2.5)/5)*5 ceil(prctile(NN,97.5)/5)*5];
         caxis(clim);
         Hcb = figure('name',sprintf('colorbar_analysis_%d',analysis_flag),'position',[0 0 100 100],'color','w');
@@ -708,7 +752,9 @@ for analysis_flag = 2
         cb.Label.String = 'SWR count';
         cb.Limits = clim; cb.Ticks = clim;
         axis off
+        
     end
+
     
     % =====================================================================
     % PSTH:
@@ -758,6 +804,31 @@ for analysis_flag = 2
         end
         % average within patient:
         [R.(sprintf('cond%d',k)),sortedSubjectList.(sprintf('cond%d',k))] = grpstats(C.(sprintf('cond%d',k)),L2,{'mean','gname'});
+        
+        % compute rest baseline per each patient:
+        if k==1
+            rest_trials_ix = contains(DATA.Rall.stimulus_type,'R');
+            [rest_baseline,rest_subjid] = grpstats(RR(rest_trials_ix),DATA.Rall.subjid(rest_trials_ix),{'mean','gname'});
+            R.('rest_baseline') = repmat(rest_baseline,[1,size(R.(sprintf('cond%d',testCond(1))),2)]);
+        end
+    end
+    
+    % For within-subjects analysis, exclude patient with not enough trials / unpaired data:
+    if  params.nconditions>1 && (params.statistical_test==1 ||  params.statistical_test==3)
+        validSubjects = intersect(sortedSubjectList.(sprintf('cond%d',testCond(1))),...
+                                  sortedSubjectList.(sprintf('cond%d',testCond(2))));
+        [~,included_ix1] = ismember(validSubjects,sortedSubjectList.(sprintf('cond%d',testCond(1))));
+        [~,included_ix2] = ismember(validSubjects,sortedSubjectList.(sprintf('cond%d',testCond(2))));
+        [~,included_ix3] = ismember(validSubjects,rest_subjid);
+        included_ix1(included_ix1==0)=[];
+        included_ix2(included_ix2==0)=[];
+        included_ix3(included_ix3==0)=[];
+        assert(all(strcmpi(sortedSubjectList.(sprintf('cond%d',testCond(1)))(included_ix1), ...
+                           sortedSubjectList.(sprintf('cond%d',testCond(2)))(included_ix2))))
+        assert(all(strcmpi(sortedSubjectList.(sprintf('cond%d',testCond(1)))(included_ix1),rest_subjid(included_ix3))));
+        R.(sprintf('cond%d',testCond(1))) = R.(sprintf('cond%d',testCond(1)))(included_ix1,:);
+        R.(sprintf('cond%d',testCond(2))) = R.(sprintf('cond%d',testCond(2)))(included_ix2,:);
+        R.rest_baseline = R.rest_baseline(included_ix3,:);
     end
     
     % Compute SEM and plot the average response:
@@ -777,7 +848,8 @@ for analysis_flag = 2
                 AVG.(sprintf('cond%d',k)) = nanmean(R.(sprintf('cond%d',k)),1);
                 SEM.(sprintf('cond%d',k)) = [];
                 for ii = 1:size(binscenters,2)
-                    [~,~,SEM.(sprintf('cond%d',k))(:,ii),nn] = ci_within_subject(R.(sprintf('cond%d',params.conditionToCompare(1)))(:,ii),R.(sprintf('cond%d',params.conditionToCompare(2)))(:,ii));
+                    [~,~,SEM.(sprintf('cond%d',k))(:,ii),nn] = ci_within_subject(R.(sprintf('cond%d',params.conditionToCompare(1)))(:,ii),...
+                                                                                 R.(sprintf('cond%d',params.conditionToCompare(2)))(:,ii));
                 end
             case 'acrosselectrodes'
                 % SEM across subjects
@@ -819,34 +891,44 @@ for analysis_flag = 2
     % =========================================================================
     % STATS:
     hax = gca;
-    testCond = params.conditionToCompare;
+   
        
     if params.statistical_test
-        if analysis_flag == 1 % baseline-vs-response comparison across patients
-            baselineWin = binscenters<0;
-            bl = mean(R.(sprintf('cond%d',testCond(1)))(:,baselineWin),2)';
-            cond1 = R.(sprintf('cond%d',testCond(1)))'; % video clip resposnse
-            cond2 = repmat(bl,[length(binscenters),1]); % rest baseline
-            [sig, pval, onsets, offsets] = compare_conditions(hax,cond1,cond2,binscenters,params.statistical_test);
-            if any(sig)
-                sigTimeWindow = [onsets(1); offsets(1)];
-            end
-            if ~single_elec_flag, save(fullfile(parentfolder,'results','stats','sigTimeWindow.mat'),'sigTimeWindow'); end
-
+        % baseline-vs-response comparison across patients:
+        if analysis_flag == 1 || analysis_flag == 4 
             
-        elseif analysis_flag > 1
+            for k=1:params.nconditions                
+                cond1 = R.(sprintf('cond%d',testCond(k)))'; % video clip resposnse
+                cond2 = R.rest_baseline'; % rest baseline
+                
+                % for comparison with prestim baseline: (optional)
+                % baselineWin = binscenters<0;
+                % prestimbl = mean(R.(sprintf('cond%d',testCond(1)))(:,baselineWin),2)';
+                % cond2 = repmat(bl,[length(binscenters),1]);
+                
+                [sig, pval, onsets, offsets] = compare_conditions(hax,cond1,cond2,binscenters,params.statistical_test,1,params.(sprintf('color%d',k)));
+                if any(sig)
+                    sigTimeWindow = [onsets(1); offsets(1)];
+                end
+                if ~single_elec_flag && analysis_flag == 1, save(fullfile(parentfolder,'results','stats','sigTimeWindow.mat'),'sigTimeWindow'); end
+            end
+        end
+        
+        % condition1-vs-condition2 comparison across patients:
+        if analysis_flag > 1
             if single_elec_flag
                 % comparison across electrodes
                 cond1 = C.(sprintf('cond%d',testCond(1)))';
                 cond2 = C.(sprintf('cond%d',testCond(2)))';
             else
+                
                 % comparison across subjects
                 cond1 = R.(sprintf('cond%d',testCond(1)))';
                 cond2 = R.(sprintf('cond%d',testCond(2)))';
+                
             end
             [sig, pval, onsets, offsets] = compare_conditions(hax,cond1,cond2,binscenters,params.statistical_test,1);
-            
-            
+                        
         end
     end
     
@@ -861,7 +943,7 @@ for analysis_flag = 2
     set(gca,'ylim',[tmpy(1) tmpy(2)*1.1]);
     
     % draw baseline (optinoal):
-    h_baseline = plot(get(gca,'xlim'),[mean(current_rest_baseline) mean(current_rest_baseline)],'--','color',COLOR.black,'linewidth',1);
+    h_baseline = plot(get(gca,'xlim'),[mean(R.rest_baseline(:,1)) mean(R.rest_baseline(:,1))],'--','color',COLOR.black,'linewidth',1);
     if norm_flag==0
         disp('no-normalization, showing ripple rate...');
         ylabel('Ripple rate (events/s)');
@@ -879,7 +961,11 @@ for analysis_flag = 2
     for ii = 1:length(h), if length(h(ii).XData)==2, h(ii).XData(1) = h(ii).XData(1) + 0.5*range(h(ii).XData); end; end
     legend boxoff
     
-    tmpy=get(gca,'ylim'); tmpx=get(gca,'xlim');
+    % add stimulus on mark:
+    tmpx=get(gca,'xlim');
+    tmpy=get(gca,'ylim'); 
+%     set(gca,'ylim',[tmpy(1)- 0.05*range(tmpy) tmpy(2)]);
+%     tmpy=get(gca,'ylim'); 
     line([0 4],[tmpy(1) tmpy(1)]+0.01*range(tmpy),'color',COLOR.black,'linewidth',5)
     text(tmpx(2),tmpy(2)*0.9,sprintf('n=%d',size(cond1,2)),'fontsize',6,'HorizontalAlignment','right');
 end
@@ -892,7 +978,7 @@ end
 outdir=fullfile(parentfolder,'results','ripple_rate_PETH_final',sprintf('ref_%d_%s',ref_flag,time_locking_event));
 if ~exist(outdir,'dir'), mkdir(outdir);disp('Creating Output Directory...'); end
 %=========================================================================
-for F = [Hagecorr Hbehavior Hhemi H4a H4b H4c H4d H0 H1a H1b H1c H1d Hsc Hcb] 
+for F = [H4a H4b H4c H4d H4e H4f]; %[Hagecorr Hbehavior Hhemi H4a H4b H4c H4d H0 H1a H1b H1c H1d Hsc Hcb] 
     figure(F);  
     set_font_size_and_type;
     enlarge_figure_and_move_axes_to_center(gcf,gca,1.1);
