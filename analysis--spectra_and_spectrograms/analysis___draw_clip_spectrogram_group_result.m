@@ -24,7 +24,7 @@ blocks = {'R1','R2','M1','M2','MT'};
 set(0,'DefaultAxesFontName', 'Arial')
 ref_flag = 2; % 1 = Common Ref; 2 = Bipolar montage;
 
-figdir=fullfile(parentfolder,'results','clip_triggered_spectrograms','group-level results',['ref_' num2str(ref_flag)]);
+figdir=fullfile(parentfolder,'results','clip_triggered_spectrograms','group-level results new',['ref_' num2str(ref_flag)]);
 if ~exist(figdir,'dir')
     mkdir(figdir);
     disp('Creating Output Directory...')
@@ -49,8 +49,8 @@ for iSub=1:length(subjects)
     maindir=fullfile(parentfolder,subjid);
     datasetID='pink_panther';
     
-    % Set outdir:
-    indir=fullfile(parentfolder,'results','data','clip_triggered_spectrograms',['ref_' num2str(ref_flag)]);
+    % Set path:
+    indir=fullfile(parentfolder,'results','data','clip_triggered_spectrograms_fft',['ref_' num2str(ref_flag)]);
 
     
     [hippocampus,hippocampus_all_channels,WM_ref] = define_hippocampal_channels(subjid,ref_flag,0);
@@ -75,10 +75,10 @@ POS = [0 0 200 160];
 %% PLOT Group level results:
 set_figure_colors;
 close all;
-saveflag = 1;
+saveflag = 0;
 counter = 0;
 
-CM = params_plot.CM;
+params_plot.CM = flipud(cbrewer('div','RdBu',32));
 params_plot.clim = [-2 2];
 params_plot.ch_label = '';
 params_plot.stimulus_onset = 0;
@@ -93,9 +93,10 @@ params_plot.title = sprintf('OLD');
 params_plot.name = sprintf('OLD clip spectrogram Group Level');
 [H1,h1,hcb1] = plot_spectrogram(avgspec,params_plot);
 axes(h1); tmpx=h1.XLim; tmpy=h1.YLim; h1.XLabel.String = 'Time from clip onset (s)';
-text(tmpx(2),tmpy(2)-0.15*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+text(tmpx(2)-0.1*range(tmpx),tmpy(2)-0.1*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+set(h1,'ytick',[4 32:32:128])
 set_font_size_and_type;
-if saveflag, save_current_figure(H1,figdir,1); end
+if saveflag, save_current_figure(H1,figdir,0); end
 
 % Figure 1 - New:
 SS =cellfun(@(x)nanmean(x,3),DATAGRP.normspec2,'UniformOutput',0);
@@ -104,26 +105,87 @@ params_plot.title = sprintf('NEW');
 params_plot.name = sprintf('NEW clip spectrogram Group Level');
 [H2,h2,hcb2] = plot_spectrogram(avgspec,params_plot);
 axes(h2); tmpx=h2.XLim; tmpy=h2.YLim; h2.XLabel.String = 'Time from clip onset (s)';
-text(tmpx(2),tmpy(2)-0.15*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+text(tmpx(2)-0.1*range(tmpx),tmpy(2)-0.1*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+set(h2,'ytick',[4 32:32:128])
 set_font_size_and_type;
-if saveflag, save_current_figure(H2,figdir,1); end
+if saveflag, save_current_figure(H2,figdir,0); end
 
 % Figure 1 - Diff:
 SS1 =cellfun(@(x)nanmean(x,3),DATAGRP.normspec1,'UniformOutput',0);
 SS2 =cellfun(@(x)nanmean(x,3),DATAGRP.normspec2,'UniformOutput',0);
 avgspec = nanmean(cat(3,SS1{:})-cat(3,SS2{:}),3);
 params_plot.title = sprintf('OLD-NEW');
+params_plot.clim = [-2 2];
 params_plot.name = sprintf('OLD-NEW clip spectrogram Group Level');
 [H3,h3,hcb3] = plot_spectrogram(avgspec,params_plot);
 axes(h3); tmpx=h3.XLim; tmpy=h3.YLim; h3.XLabel.String = 'Time from clip onset (s)';
-text(tmpx(2),tmpy(2)-0.15*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+text(tmpx(2)-0.1*range(tmpx),tmpy(2)-0.1*range(tmpy),sprintf('n=%d',length(SS)),'HorizontalAlignment','right','fontsize',6);
+set(h3,'ytick',[4 32:32:128],'ylim',[4 128])
 set_font_size_and_type;
-if saveflag, save_current_figure(H3,figdir,1); end
+if saveflag, save_current_figure(H5,figdir,0); end
 
+keep_tout = params_plot.t_out;
+%% =========================================================================
+% Cluster-based Stats on spectrograms:
 
-%% Stats:
-% ================
-% Run stats on HFB: 
+test_interval = keep_tout>0 & keep_tout<=4; % trial response
+
+SS1 =cellfun(@(x)nanmean(x,3),DATAGRP.normspec1,'UniformOutput',0);
+SS2 =cellfun(@(x)nanmean(x,3),DATAGRP.normspec2,'UniformOutput',0);
+stat1 = cat(3,SS1{:});
+stat2 = cat(3,SS2{:});
+% group by patients:
+s = unique(chINFO.subjid);
+stat1grp = []; stat2grp = [];
+for iSub = 1:length(s)
+    stat1grp = cat(3,stat1grp,mean(stat1(:,test_interval,strcmpi(chINFO.subjid,s{iSub})),3));
+    stat2grp = cat(3,stat2grp,mean(stat2(:,test_interval,strcmpi(chINFO.subjid,s{iSub})),3));
+end
+naccu = 1000;
+alpha = 0.05;
+
+% compute stats in FT using montecarlo cluster-based statistics:
+[st, df, pvals] = statcondfieldtrip({stat1grp,stat2grp},'paired','on','correctm','cluster','naccu', naccu,'method','montecarlo','alpha',alpha,'structoutput','on');
+%%
+params_plot.CM = flipud(cbrewer('div','RdBu',32));
+params_plot.clim = [-5 5];
+params_plot.logscaleflag = 0;
+params_plot.t_out=params_plot.t_out(test_interval);
+tmp =  st.t; 
+sigmask = tmp; 
+sigmask(pvals>0.05)=0; %tmpmask(tmpmask>0) = 1;
+alphamask = ones(size(sigmask)) * 0;
+alphamask(logical(sigmask)) = 1;
+
+params_plot.title = sprintf('Group Level: OLD-vs-NEW\nn=%d subjects',length(s));
+params_plot.name = sprintf('OLD-vs-NEW clip spectrogram Group Level Stats');
+[H5,h5,hcb5] = plot_spectrogram(tmp,params_plot);
+h_img = findobj(h5,'type','image');
+h_img.AlphaData = alphamask;
+hcb5.Title.String = 'tval';
+set(h5,'ytick',[4 32:32:128],'ylim',[4 128])
+[~,fmx] = max(sigmask,[],2);
+[~,tmx] = max(sigmask,[],1);
+fmx(fmx==1) = nan;
+tmx(tmx==1) = nan;
+
+axes(h5); hold on;
+scatter(params_plot.t_out(round(nanmedian(tmx))),params_plot.f_out(round(nanmedian(fmx))),25,'ok','LineWidth',1);
+%scatter(params_plot.t_out(round(nanmedian(tmx))),params_plot.f_out(round(nanmedian(fmx))),5,'ok','LineWidth',1);
+text(params_plot.t_out(round(nanmedian(tmx)))+0.5,params_plot.f_out(round(nanmedian(fmx))),...
+     sprintf('%dHz',params_plot.f_out(round(nanmedian(fmx)))),'HorizontalAlignment','left','fontsize',6);
+
+% Optional: add contour around sig clusters - 
+% axes(h5); hold on;
+% [X,Y] = meshgrid(params_plot.t_out,flipud(params_plot.f_out));
+% [tmpc, tmph] = contour(X,Y,sigmask,1); 
+% set(tmph, 'linecolor', COLOR.black, 'linewidth', 0.1)
+
+if saveflag, save_current_figure(H5,figdir,0); end
+params_plot.t_out = keep_tout;
+
+% =============================
+%% Run stats on HFB time series: 
 t_out_sec = t_out./1000;
 test_interval = t_out_sec>params_plot.xlim(1) & t_out_sec<params_plot.xlim(2); % -2 to 6 s
 HFB1 = cellfun(@(x)nanmean(x,2),DATAGRP.HFB1,'UniformOutput',0);
@@ -141,8 +203,8 @@ end
 % Draw HFB response:
 H4 = figure('color','w','name',sprintf('HFB OLD-vs-NEW group-level'),'position',[0 0 220 180]); hold on;
 title(sprintf('High-gamma (60-128Hz)'),'fontweight','normal');
-h1 = shadedErrorBar(t_out_sec(test_interval),mean(stat1grp,2),std(stat1grp,[],2)./sqrt(size(stat1grp,2)),{'color',COLOR.blue,'linewidth',0.5},0.5)
-h2 = shadedErrorBar(t_out_sec(test_interval),mean(stat2grp,2),std(stat2grp,[],2)./sqrt(size(stat2grp,2)),{'color',COLOR.red,'linewidth',0.5},0.5)
+h1 = shadedErrorBar(t_out_sec(test_interval),mean(stat1grp,2),std(stat1grp,[],2)./sqrt(size(stat1grp,2)),{'color',COLOR.blue,'linewidth',0.5},0.5);
+h2 = shadedErrorBar(t_out_sec(test_interval),mean(stat2grp,2),std(stat2grp,[],2)./sqrt(size(stat2grp,2)),{'color',COLOR.red,'linewidth',0.5},0.5);
 xlabel('Time from clip onset (s)'); ylabel('Power (dB)'); 
 axis tight; ylim([-0.5 1]); xlim(params_plot.xlim);
 tmpx=get(gca,'XLim'); tmpy=get(gca,'YLim'); 
@@ -328,6 +390,7 @@ assert(all(strcmpi(elecName1(RRch_sortix),HFBch(HFBch_sortix))))
 
 
 %% Scatter: HFB-vs-ripple rate
+% set(0, 'DefaultFigureVisible', 'on') 
 H7 = figure('color','w','name',sprintf('HFB-vs-RR group-level'),'position',[0 0 220 180]); hold on;
 title(sprintf('Effect size (OLD>NEW)'),'fontweight','normal');
 
