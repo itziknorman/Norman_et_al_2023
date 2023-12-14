@@ -1,6 +1,6 @@
 # Code accompanying Norman_et_al_2023
 
-﻿This repository contains code for the main analyses described in Norman et al. (2023), "Hippocampal ripples support recognition memory in children".
+﻿This repository contains code for the main analyses described in Norman et al. (2023), "Hippocampal ripples linked to recognition memory judgments in children".
 
 For the intracranial data and the complete code, please refer to Zenodo DOI (will be made available after publication): 10.5281/zenodo.8187953.
 
