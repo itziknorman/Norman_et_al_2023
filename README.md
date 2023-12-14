@@ -19,7 +19,18 @@ External open-source toolboxes used in the analysis:
 •	Mass Univariate ERP Toolbox (https://openwetware.org/wiki/Mass_Univariate_ERP_Toolbox)
 
 **The following table links the code to the main figures in the paper:**
-![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/66e4067d-4c19-4feb-8029-608be5a9b1db)
+Figure #	Matlab file
+1f	analysis___ripples_rate _PETH_analysis_final.m
+2b	get_ripple_events.m
+2c-e	analysis___draw_ripple_spectrogram_group_results.m
+2f-g	analysis___ripples_rate _across_conditions_and_IRI_distribution.m
+3a-c,e,f	analysis___draw_ripple_spectrogram_group_results.m
+3d	analysis___ripple_rate_analysis_old_vs_new_anatomy.m
+4a	analysis___ripples_rate_PETH_analysis_final.m
+4b-f	analysis___ripple_train_crosscorrelations.m
+5	analysis___draw_ripple_spectrogram_group_results.m
+![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/ffffd68d-0a5b-4511-9ebf-d3878ff001cc)
+
 
 
 
