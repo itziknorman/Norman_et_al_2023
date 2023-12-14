@@ -29,7 +29,8 @@ Figure #	Matlab file
 4a	analysis___ripples_rate_PETH_analysis_final.m
 4b-f	analysis___ripple_train_crosscorrelations.m
 5	analysis___draw_ripple_spectrogram_group_results.m
-![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/ffffd68d-0a5b-4511-9ebf-d3878ff001cc)
+![image](https://github.com/itziknorman/Norman_et_al_2023/assets/59057794/6ad19145-59c3-40de-88af-db6c425a960b)
+
 
 
 
