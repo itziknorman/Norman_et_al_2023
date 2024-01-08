@@ -4,7 +4,7 @@
 
 For the intracranial data and the complete code, please refer to Zenodo DOI (will be made available after publication): 10.5281/zenodo.8187953.
 
-# Minimal demo: 
+--> Minimal demo: 
 A minimal demo for ripple detection can be downloaded from here: 
 https://www.dropbox.com/scl/fi/m2nje3e23mrzok81zmfqj/Ripple_detection_demo.zip?rlkey=ra0nudvy9khrj9t3dndz6whbe&dl=0
 Unzip the folder, and once it's extracted, run the "get_ripple_events_demo.m" script. Ensure you have EEGLAB installed and set the path as specified in the MATLAB code before running the script.
