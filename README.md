@@ -4,6 +4,12 @@
 
 For the intracranial data and the complete code, please refer to Zenodo DOI (will be made available after publication): 10.5281/zenodo.8187953.
 
+===============================================================
+A minimal demo for ripple detection can be downloaded from here: 
+https://www.dropbox.com/scl/fi/m2nje3e23mrzok81zmfqj/Ripple_detection_demo.zip?rlkey=ra0nudvy9khrj9t3dndz6whbe&dl=0
+Unzip the folder, and once it's extracted, run the "get_ripple_events_demo.m" script. Ensure you have EEGLAB installed and set the path as specified in the MATLAB code before running the script.
+===============================================================
+
 **General remarks and instructions:**
 The analysis code was written in MATLAB (R2021a). All functions and scripts are organized in subdirectories within the "matlab_scripts" folder, based on their respective subjects of analysis, such as ripple detection, ripple rate and PETH, ripple-triggered spectrograms, and more.
 The analysis was conducted on a desktop computer equipped with a Intel® Xeon(R) CPU E5-2630 v3 @ 2.40GHz × 16 and 32GB RAM. Matlab's Signal Processing Toolbox is essential.
